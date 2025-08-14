@@ -16,4 +16,6 @@ public class ChatMessage {
     private String content;
     private String receiverName;
     private String senderName;
+    private Boolean channel;
+    private Boolean townHall;
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import tech.justjava.zam.chat.ChatMessage;
-import tech.justjava.zam.chat.ChatService;
+import tech.justjava.zam.chat.service.ChatService;
 import tech.justjava.zam.file.model.FileData;
 import tech.justjava.zam.file.service.FileDataService;
 

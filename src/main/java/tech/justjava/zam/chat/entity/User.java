@@ -16,7 +16,9 @@ import lombok.Setter;
 import tech.justjava.zam.keycloak.UserGroup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,20 +28,37 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @Column(nullable = false, unique = true)
     private String userId;
+
     private String firstName;
+
     private String lastName;
+
     private String email;
+
     private Boolean status;
+
+    @Transient
+    private Boolean online;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ORG_ID")
+    private Organization organization;
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<ChatGroup> chatGroup = new HashSet<>();
+
+//    @ElementCollection(targetClass = Roles.class, fetch = FetchType.EAGER)
+//    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "role")
+//    @Enumerated(EnumType.STRING)
+//    private Set<Roles> roles = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "user_group_id")
     private UserGroup userGroup;
-
-    @Transient
-    private String avatar;
-    @Transient
-    private Boolean online;
 
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
     private List<Conversation> conversations = new ArrayList<>();

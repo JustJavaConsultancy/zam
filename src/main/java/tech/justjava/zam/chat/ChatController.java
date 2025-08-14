@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tech.justjava.zam.account.AuthenticationManager;
 import tech.justjava.zam.chat.domain.TestMessage;
+import tech.justjava.zam.chat.service.ChatService;
 import tech.justjava.zam.chat.service.TestChatService;
 import tech.justjava.zam.keycloak.UserDTO;
 
@@ -144,25 +145,10 @@ public class ChatController {
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage message) {
         System.out.println(" I received ===="+message);
-        /***
-         *      ///SENDING
-         *      Create a Json of this, to this endpoint to send a message
-         *     { receiverId : {the recipient's userId},
-         *        senderId : {you the logged in user},
-         *       content : {message to be sent}
-         *      }
-         *
-         *      ///RECEIVING
-         *      When receiving a message, a message of this type would be received
-         *      { senderId : {the sender's userId},
-         *        receiverId : {the Id of the user receiving the message},
-         *        content : {message}
-         *      }
-         *      All users will be subscribed to
-         *          stompClient.subscribe(`/topic/group/` + {their userId}, function (messageOutput) {
-         *
-         *    You can then append the message to the respective user on the frontend based on the sender's Id
-         */
+        if (message.getTownHall())
+            chatService.sendTownHallMessage(message);
+        if (message.getChannel())
+            chatService.sendChannelMessage(message);
         //String userId = (String) authenticationManager.get("sub");
         String destination = "/topic/group/" + message.getReceiverId();
         String notification= "/topic/notification/" + message.getSenderId();
