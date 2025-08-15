@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AnonymousConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -39,11 +40,14 @@ public class Oauth2SecurityConfig {
                                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .csrf(CsrfConfigurer::disable)
                 .oauth2Login(Customizer.withDefaults())
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 .requestMatchers(new MvcRequestMatcher(introspector, "/login"))
                                 .permitAll()
-                                .requestMatchers(new AntPathRequestMatcher(("/test")))
+                                .requestMatchers(new MvcRequestMatcher(introspector, "/swagger-ui/**"))
+                                .permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/auth", "POST"))
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

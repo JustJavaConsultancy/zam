@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     default List<User> findAll() {
         return findAll(Sort.by(Sort.Direction.ASC, "firstName"));
     }
+
+    User findByEmail(String email);
 }

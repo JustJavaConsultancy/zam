@@ -375,4 +375,15 @@ public class KeycloakService {
         syncGroups();
         syncClientUsers();
     }
+
+    public Object authenticate(String username, String password) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", username);
+        params.put("password", password);
+        params.put("client_id", clientId);
+        params.put("client_secret", clientSecret);
+        params.put("grant_type", "password");
+
+        return keycloakClient.authenticate(params).getBody();
+    }
 }

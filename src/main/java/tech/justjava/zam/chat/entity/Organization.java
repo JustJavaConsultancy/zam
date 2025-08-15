@@ -1,5 +1,7 @@
 package tech.justjava.zam.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@JsonIgnoreProperties({"organizationAdmin"})
 public class Organization extends AuditableEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +37,7 @@ public class Organization extends AuditableEntity{
     @OneToOne
     private TownHall townHall;
 
+    @JsonBackReference
     @OneToOne
     private User organizationAdmin;
 

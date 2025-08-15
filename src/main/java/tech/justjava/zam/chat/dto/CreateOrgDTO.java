@@ -13,5 +13,6 @@ public class CreateOrgDTO {
     private String supportChannelDescription;
     private String townHallName;
     private String townHallDescription;
+    private String adminEmail;
 
 }

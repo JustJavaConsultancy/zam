@@ -14,6 +14,7 @@ import tech.justjava.zam.chat.entity.Channel;
 import tech.justjava.zam.chat.entity.Conversation;
 import tech.justjava.zam.chat.entity.Message;
 import tech.justjava.zam.chat.entity.Organization;
+import tech.justjava.zam.chat.entity.OrganizationDto;
 import tech.justjava.zam.chat.entity.SupportChannel;
 import tech.justjava.zam.chat.entity.TownHall;
 import tech.justjava.zam.chat.entity.User;
@@ -175,11 +176,16 @@ public class ChatService {
     }
 
     @Transactional
-    public void createOrganization(CreateOrgDTO dto){
-        String userId = (String) authenticationManager.get("sub");
-        User user= userRepository.findByUserId(userId);
-        if (user == null) {
-            throw new EntityNotFoundException("User not found with ID: " + userId);
+    public Organization createOrganization(CreateOrgDTO dto){
+        User user;
+        if (dto.getAdminEmail() == null || dto.getAdminEmail().isEmpty()) {
+            String userId = (String) authenticationManager.get("sub");
+             user= userRepository.findByUserId(userId);
+            if (user == null) {
+                throw new EntityNotFoundException("User not found with ID: " + userId);
+            }
+        }else {
+            user = userRepository.findByEmail(dto.getAdminEmail());
         }
         Channel channel = new Channel();
         channel.setName(dto.getChannelName());
@@ -206,5 +212,38 @@ public class ChatService {
         organization = organizationRepository.save(organization);
         user.setOrganization(organization);
         userRepository.save(user);
+        organization.setOrganizationAdmin(null);
+        organization.setUsers(null);
+        return organization;
     }
+
+    public void addUserToOrganization(String email, Long orgId){
+        Organization organization = organizationRepository.findById(orgId)
+                .orElseThrow(() -> new EntityNotFoundException("Organization does not exist"));
+        User user = userRepository.findByEmail(email);
+        user.setOrganization(organization);
+        userRepository.save(user);
+    }
+
+    public Object getOrgMembers(Long orgId) {
+        Organization organization = organizationRepository.findById(orgId)
+                .orElseThrow(() -> new EntityNotFoundException("Organization does not exist"));
+        Set<User> users = organization.getUsers();
+        return mapUsersToDTO(users.stream().toList());
+    }
+
+    public Object getOrganizations(){
+
+        List<Organization> orgs =  organizationRepository.findAll();
+        for (Organization org : orgs) {
+            org.setOrganizationAdmin(null);
+            org.setUsers(null);
+        }
+        return orgs;
+    }
+
+//    private OrganizationDto mapOrg (Organization org){
+//        OrganizationDto dto = new OrganizationDto();
+//
+//    }
 }
