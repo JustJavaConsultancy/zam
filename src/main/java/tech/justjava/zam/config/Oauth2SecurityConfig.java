@@ -47,7 +47,7 @@ public class Oauth2SecurityConfig {
                                 .permitAll()
                                 .requestMatchers(new MvcRequestMatcher(introspector, "/swagger-ui/**"))
                                 .permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/api/auth", "POST"))
+                                .requestMatchers(new AntPathRequestMatcher("/api-v/auth", "POST"))
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
