@@ -45,6 +45,9 @@ spring:
             client_secret: ${KEYCLOAK_CLIENT_SECRET:qPjl0dxLmMnwKsZjwAC6KAad3iZjll7K}
             authorization-grant-type: authorization_code
             scope: openid,profile,email
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://ngcloak.onrender.com/realms/zam/protocol/openid-connect/certs
 
   main:
     allow-bean-definition-overriding: true
