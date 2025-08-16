@@ -47,7 +47,7 @@ spring:
             scope: openid,profile,email
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI:https://ngcloak.onrender.com/realms/zam}
+          issuer-uri: https://ngcloak.onrender.com/realms/zam
 
   main:
     allow-bean-definition-overriding: true
