@@ -92,4 +92,10 @@ public interface KeycloakFeignClient {
             @PathVariable String groupId
     );
 
+    @PostMapping(value = "/realms/zam/protocol/openid-connect/token",
+    consumes =  {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    ResponseEntity<Map<String, Object>> authenticate(
+            Map<String,?> params
+    );
+
 }

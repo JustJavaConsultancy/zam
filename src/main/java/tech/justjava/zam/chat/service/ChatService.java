@@ -1,15 +1,29 @@
-package tech.justjava.zam.chat;
+package tech.justjava.zam.chat.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.justjava.zam.account.AuthenticationManager;
+import tech.justjava.zam.chat.ChatMessage;
 import tech.justjava.zam.chat.dto.ConversationDto;
+import tech.justjava.zam.chat.dto.CreateOrgDTO;
+import tech.justjava.zam.chat.entity.Channel;
 import tech.justjava.zam.chat.entity.Conversation;
 import tech.justjava.zam.chat.entity.Message;
+import tech.justjava.zam.chat.entity.Organization;
+import tech.justjava.zam.chat.entity.OrganizationDto;
+import tech.justjava.zam.chat.entity.SupportChannel;
+import tech.justjava.zam.chat.entity.TownHall;
 import tech.justjava.zam.chat.entity.User;
+import tech.justjava.zam.chat.repository.ChannelRepository;
 import tech.justjava.zam.chat.repository.ConversationRepository;
 import tech.justjava.zam.chat.repository.MessageRepository;
+import tech.justjava.zam.chat.repository.OrganizationRepository;
+import tech.justjava.zam.chat.repository.SupportChannelRepository;
+import tech.justjava.zam.chat.repository.TownHallRepository;
 import tech.justjava.zam.chat.repository.UserRepository;
 import tech.justjava.zam.keycloak.UserDTO;
 
@@ -25,10 +39,18 @@ public class ChatService {
     private final UserRepository userRepository;
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
+    private final AuthenticationManager authenticationManager;
+    private final ChannelRepository channelRepository;
+    private final TownHallRepository townHallRepository;
+    private final SupportChannelRepository supportChannelRepository;
+    private final OrganizationRepository organizationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
+
 
     public List<UserDTO> getUsers() {
         return mapUsersToDTO(userRepository.findAll());
     }
+
     @Transactional
     public List<ConversationDto> getConversations(String userId) {
         List<Conversation> conversations = conversationRepository.findAllByMembers_UserId(userId);
@@ -66,6 +88,22 @@ public class ChatService {
         conversation.setMembers(users);
         conversation = conversationRepository.save(conversation);
         return conversation;
+    }
+
+    public void sendTownHallMessage(ChatMessage message) {
+        User user = userRepository.findByUserId(message.getSenderId());
+        TownHall townHall = user.getOrganization().getTownHall();
+        String destination = "/topic/townhall/" + townHall.getId();
+        messagingTemplate.convertAndSend(destination, message);
+    }
+
+    public void sendChannelMessage(ChatMessage message) {
+        User user = userRepository.findByUserId(message.getSenderId());
+        Channel channel = user.getOrganization().getChannel();
+        if (user.equals(user.getOrganization().getOrganizationAdmin())) {
+            String destination = "/topic/townhall/" + channel.getId();
+            messagingTemplate.convertAndSend(destination, message);
+        }
     }
 
     @Async
@@ -136,4 +174,76 @@ public class ChatService {
         conversationRepository.delete(conversation);
         return null;
     }
+
+    @Transactional
+    public Organization createOrganization(CreateOrgDTO dto){
+        User user;
+        if (dto.getAdminEmail() == null || dto.getAdminEmail().isEmpty()) {
+            String userId = (String) authenticationManager.get("sub");
+             user= userRepository.findByUserId(userId);
+            if (user == null) {
+                throw new EntityNotFoundException("User not found with ID: " + userId);
+            }
+        }else {
+            user = userRepository.findByEmail(dto.getAdminEmail());
+        }
+        Channel channel = new Channel();
+        channel.setName(dto.getChannelName());
+        channel.setDescription(dto.getChannelDescription());
+        channel = channelRepository.save(channel);
+
+        TownHall townHall = new TownHall();
+        townHall.setName(dto.getTownHallName());
+        townHall.setDescription(dto.getTownHallDescription());
+        townHall = townHallRepository.save(townHall);
+
+        SupportChannel supportChannel = new SupportChannel();
+        supportChannel.setName(dto.getSupportChannelName());
+        supportChannel.setDescription(dto.getSupportChannelDescription());
+        supportChannel = supportChannelRepository.save(supportChannel);
+
+        Organization organization = new Organization();
+        organization.setName(dto.getOrgName());
+        organization.setDescription(dto.getOrgDescription());
+        organization.setChannel(channel);
+        organization.setTownHall(townHall);
+        organization.setSupportChannel(supportChannel);
+        organization.setOrganizationAdmin(user);
+        organization = organizationRepository.save(organization);
+        user.setOrganization(organization);
+        userRepository.save(user);
+        organization.setOrganizationAdmin(null);
+        organization.setUsers(null);
+        return organization;
+    }
+
+    public void addUserToOrganization(String email, Long orgId){
+        Organization organization = organizationRepository.findById(orgId)
+                .orElseThrow(() -> new EntityNotFoundException("Organization does not exist"));
+        User user = userRepository.findByEmail(email);
+        user.setOrganization(organization);
+        userRepository.save(user);
+    }
+
+    public Object getOrgMembers(Long orgId) {
+        Organization organization = organizationRepository.findById(orgId)
+                .orElseThrow(() -> new EntityNotFoundException("Organization does not exist"));
+        Set<User> users = organization.getUsers();
+        return mapUsersToDTO(users.stream().toList());
+    }
+
+    public Object getOrganizations(){
+
+        List<Organization> orgs =  organizationRepository.findAll();
+        for (Organization org : orgs) {
+            org.setOrganizationAdmin(null);
+            org.setUsers(null);
+        }
+        return orgs;
+    }
+
+//    private OrganizationDto mapOrg (Organization org){
+//        OrganizationDto dto = new OrganizationDto();
+//
+//    }
 }
