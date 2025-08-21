@@ -1,5 +1,6 @@
 package tech.justjava.zam.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,6 +44,9 @@ public class User {
     @Transient
     private Boolean online;
 
+    private Boolean isAdmin = false;
+
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ORG_ID")
     private Organization organization;

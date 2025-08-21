@@ -1,25 +1,26 @@
 package tech.justjava.zam.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
-public class ChatGroup extends AuditableEntity{
+public class Community extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +28,7 @@ public class ChatGroup extends AuditableEntity{
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "COMMUNITY_ID")
-    private Community community;
+    private String description;
 
     @OneToOne
     private Channel channel;
@@ -37,10 +36,13 @@ public class ChatGroup extends AuditableEntity{
     @OneToOne
     private TownHall townHall;
 
+    @JsonBackReference
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ORG_ID")
+    private Organization organization;
+
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "USER_GROUPS",
-            joinColumns = @JoinColumn(name = "GROUP_ID"),
-            inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-    private Set<User> users;
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+    private List<ChatGroup> chatGroups;
+
 }
