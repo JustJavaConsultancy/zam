@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tech.justjava.zam.account.AuthenticationManager;
+import tech.justjava.zam.chat.dto.CreateChatDTO;
+import tech.justjava.zam.chat.dto.CreateCommunityVO;
 import tech.justjava.zam.chat.dto.CreateOrgDTO;
+import tech.justjava.zam.chat.dto.EventDTO;
 import tech.justjava.zam.chat.service.ChatService;
 import tech.justjava.zam.keycloak.KeycloakService;
 import tech.justjava.zam.keycloak.UserDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -91,5 +95,53 @@ public class UserController {
     @GetMapping("/organization/members/{orgId}")
     public ResponseEntity<?> getOrganizationMembers(@PathVariable Long orgId){
         return ResponseEntity.ok(chatService.getOrgMembers(orgId));
+    }
+
+    @PostMapping("/create-community")
+    public ResponseEntity<?> createCommunity(@RequestBody CreateCommunityVO dto){
+        try {
+            var o = chatService.createCommunity(dto);
+            return ResponseEntity.ok(o);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/create-group")
+    public ResponseEntity<?> createChatGroup(@RequestBody CreateChatDTO dto){
+        try {
+            var o = chatService.createChatGroup(dto);
+            return ResponseEntity.ok(o);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("group/add-user")
+    public ResponseEntity<?> addUserToGroup(@RequestParam String email, @RequestParam Long groupId){
+        try {
+            chatService.addUserToGroup(email, groupId);
+            return ResponseEntity.ok("User successfully added");
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(e.getMessage());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/create-event")
+    public ResponseEntity<?> createEvent(@RequestBody @Valid EventDTO dto){
+        try {
+            var o = chatService.createEvent(dto);
+            return ResponseEntity.ok(o);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(e.getMessage());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

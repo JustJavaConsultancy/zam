@@ -9,17 +9,25 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.justjava.zam.account.AuthenticationManager;
 import tech.justjava.zam.chat.ChatMessage;
 import tech.justjava.zam.chat.dto.ConversationDto;
+import tech.justjava.zam.chat.dto.CreateChatDTO;
+import tech.justjava.zam.chat.dto.CreateCommunityVO;
 import tech.justjava.zam.chat.dto.CreateOrgDTO;
+import tech.justjava.zam.chat.dto.EventDTO;
 import tech.justjava.zam.chat.entity.Channel;
+import tech.justjava.zam.chat.entity.ChatGroup;
+import tech.justjava.zam.chat.entity.Community;
 import tech.justjava.zam.chat.entity.Conversation;
+import tech.justjava.zam.chat.entity.Event;
 import tech.justjava.zam.chat.entity.Message;
 import tech.justjava.zam.chat.entity.Organization;
-import tech.justjava.zam.chat.entity.OrganizationDto;
 import tech.justjava.zam.chat.entity.SupportChannel;
 import tech.justjava.zam.chat.entity.TownHall;
 import tech.justjava.zam.chat.entity.User;
 import tech.justjava.zam.chat.repository.ChannelRepository;
+import tech.justjava.zam.chat.repository.ChatGroupRepository;
+import tech.justjava.zam.chat.repository.CommunityRepository;
 import tech.justjava.zam.chat.repository.ConversationRepository;
+import tech.justjava.zam.chat.repository.EventRepository;
 import tech.justjava.zam.chat.repository.MessageRepository;
 import tech.justjava.zam.chat.repository.OrganizationRepository;
 import tech.justjava.zam.chat.repository.SupportChannelRepository;
@@ -45,6 +53,9 @@ public class ChatService {
     private final SupportChannelRepository supportChannelRepository;
     private final OrganizationRepository organizationRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final CommunityRepository communityRepository;
+    private final ChatGroupRepository chatGroupRepository;
+    private final EventRepository eventRepository;
 
 
     public List<UserDTO> getUsers() {
@@ -100,7 +111,7 @@ public class ChatService {
     public void sendChannelMessage(ChatMessage message) {
         User user = userRepository.findByUserId(message.getSenderId());
         Channel channel = user.getOrganization().getChannel();
-        if (user.equals(user.getOrganization().getOrganizationAdmin())) {
+        if (user.getIsAdmin()) {
             String destination = "/topic/townhall/" + channel.getId();
             messagingTemplate.convertAndSend(destination, message);
         }
@@ -208,12 +219,11 @@ public class ChatService {
         organization.setChannel(channel);
         organization.setTownHall(townHall);
         organization.setSupportChannel(supportChannel);
-        organization.setOrganizationAdmin(user);
         organization = organizationRepository.save(organization);
+
         user.setOrganization(organization);
+        user.setIsAdmin(true);
         userRepository.save(user);
-        organization.setOrganizationAdmin(null);
-        organization.setUsers(null);
         return organization;
     }
 
@@ -235,15 +245,91 @@ public class ChatService {
     public Object getOrganizations(){
 
         List<Organization> orgs =  organizationRepository.findAll();
-        for (Organization org : orgs) {
-            org.setOrganizationAdmin(null);
-            org.setUsers(null);
-        }
+//        for (Organization org : orgs) {
+//            System.out.println(org.getOrganizationAdmin().getId());
+//            org.setOrganizationAdmin(null);
+//            org.setUsers(null);
+//        }
         return orgs;
     }
 
-//    private OrganizationDto mapOrg (Organization org){
-//        OrganizationDto dto = new OrganizationDto();
-//
-//    }
+    public Community createCommunity(CreateCommunityVO dto) {
+        User user = userRepository.findByEmail(dto.getUserEmail());
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with Email: " + dto.getUserEmail());
+        }
+        Channel channel = new Channel();
+        channel.setName(dto.getChannelName());
+        channel.setDescription(dto.getChannelDescription());
+        channel = channelRepository.save(channel);
+
+        TownHall townHall = new TownHall();
+        townHall.setName(dto.getTownHallName());
+        townHall.setDescription(dto.getTownHallDescription());
+        townHall = townHallRepository.save(townHall);
+
+        Community community = new Community();
+        community.setName(dto.getCommunityName());
+        community.setDescription(dto.getCommunityDescription());
+        community.setOrganization(user.getOrganization());
+        community.setChannel(channel);
+        community.setTownHall(townHall);
+        community = communityRepository.save(community);
+        return community;
+    }
+
+    public ChatGroup createChatGroup(CreateChatDTO dto){
+        Community community = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new EntityNotFoundException("Community does not exist"));
+
+        Channel channel = new Channel();
+        channel.setName(dto.getChannelName());
+        channel.setDescription(dto.getChannelDescription());
+        channel = channelRepository.save(channel);
+
+        TownHall townHall = new TownHall();
+        townHall.setName(dto.getTownHallName());
+        townHall.setDescription(dto.getTownHallDescription());
+        townHall = townHallRepository.save(townHall);
+
+        ChatGroup chatGroup = new ChatGroup();
+        chatGroup.setName(dto.getGroupName());
+        chatGroup.setChannel(channel);
+        chatGroup.setTownHall(townHall);
+        chatGroup.setCommunity(community);
+        chatGroup = chatGroupRepository.save(chatGroup);
+        return chatGroup;
+    }
+
+    @Transactional
+    public void addUserToGroup(String email, Long groupId) {
+        ChatGroup group = chatGroupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("Group does not exist"));
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new EntityNotFoundException("User does not exist");
+        }
+        group.getUsers().add(user);
+    }
+
+    public Event createEvent(EventDTO dto) {
+        Organization organization = organizationRepository.findById(dto.getOrganizationId())
+                .orElseThrow(() -> new EntityNotFoundException("Organization does not exist"));
+        Event event = new Event();
+        event.setTitle(dto.getTitle());
+        event.setDescription(dto.getDescription());
+        event.setOrganization(organization);
+        if (dto.getCommunityId() != null) {
+            Community community = communityRepository.findById(dto.getCommunityId())
+                    .orElseThrow(() -> new EntityNotFoundException("Community does not exist"));
+            event.setCommunity(community);
+        }
+        if (dto.getChatGroupId() != null) {
+            ChatGroup group = chatGroupRepository.findById(dto.getChatGroupId())
+                    .orElseThrow(() -> new EntityNotFoundException("Chat group does not exist"));
+            event.setChatGroup(group);
+        }
+        event = eventRepository.save(event);
+        return event;
+    }
 }
