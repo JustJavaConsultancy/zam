@@ -6,17 +6,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskMaster - Process Workflow Management</title>
+    <title>ZAM - Legal Process Management</title>
 
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    
     <!-- Font Awesome CSS -->
     <link
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
             rel="stylesheet"
             crossorigin="anonymous">
+    
+    <!-- WebSocket and Chart libraries -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,50 +28,7 @@
     <link th:href="@{/css/app.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     
-    <!-- Theme initialization script to prevent flash of unstyled content -->
-    <script>
-      (function() {
-        const savedMode = localStorage.getItem('colorMode');
-        const html = document.documentElement;
-        const body = document.body;
-        
-        if (savedMode === 'light') {
-          body.classList.add('light-mode');
-          html.classList.remove('dark');
-        } else {
-          body.classList.remove('light-mode');
-          html.classList.add('dark');
-        }
-      })();
-        function toggleDropdown(menuId) {
-            const submenu = document.getElementById(`${menuId}-submenu`);
-            const icon = document.getElementById(`${menuId}-icon`);
-
-            if (submenu.style.maxHeight === '0px' || !submenu.style.maxHeight) {
-                // Open the dropdown
-                submenu.style.maxHeight = `${submenu.scrollHeight}px`;
-                icon.classList.add('rotate-90');
-
-                // Show submenu items with delay for staggered effect
-                const items = submenu.querySelectorAll('a');
-                items.forEach((item, index) => {
-                    setTimeout(() => {
-                        item.classList.remove('opacity-0');
-                    }, index * 100);
-                });
-            } else {
-                // Close the dropdown
-                submenu.style.maxHeight = '0px';
-                icon.classList.remove('rotate-90');
-
-                // Hide submenu items
-                const items = submenu.querySelectorAll('a');
-                items.forEach(item => {
-                    item.classList.add('opacity-0');
-                });
-            }
-        }
-    </script>
+    <!-- WebSocket connection script -->
 <script>
     let stompClient = null
     function connectStomp() {
@@ -81,183 +40,209 @@
 
         stompClient.subscribe(`/topic/group/449a5325-da3e-4692-93ea-ce8da8346e2f`, function () {
           console.log('connection is ready');
+                });
         });
     }
 </script>
 </head>
 
-<body class="flex h-screen">
-<div class="sidebar-overlay"></div>
-<aside class="sidebar w-64 p-6 flex flex-col justify-between fixed lg:relative h-screen overflow-y-auto">
-    <div>
-        <div class="flex items-center mb-10 space-x-2">
-            <img src="/images/justjavaLogo.svg" class="w-8 h-8">
-            <h1 class="text-2xl font-bold text-white mt-1 brand-title">JustJava</h1>
-        </div>
-        <nav class="space-y-4">
-            <a class="flex items-center px-4 py-3 text-slate-300 text-white rounded-lg"
-               th:href="@{/dashboard}"
-               th:classappend="${currentPath == '/dashboard'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">dashboard</span>
-                <span>Dashboard</span>
-            </a>
-
-<!--            <a th:if="${session.isAdmin == true or session.isManager == true}"-->
-<!--               class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"-->
-<!--               th:classappend="${currentPath == '/processes/' + name.processKey} ? ' bg-blue-600'"-->
-<!--               th:each="name : ${session.processNames}"-->
-<!--               th:href="@{'/processes/' + ${name.processKey}}">-->
-<!--                <span class="material-icons mr-3">task_alt</span>-->
-<!--                <span th:text="${name.processName}">Process Name</span>-->
-<!--                <span>Tasks</span>-->
-<!--            </a>-->
-            <div th:each="name : ${session.processNames}">
-                <button th:attr="onclick='toggleDropdown(&quot;' + ${name.processName} + '&quot;)'"
-                 class="w-full flex items-center justify-between px-4 py-3 text-slate-300 transition-all duration-200 menu-item">
-                    <div class="flex items-center space-x-3">
-                        <span class="material-icons">task_alt</span>
-                        <span th:text="${#strings.arraySplit(name.processName, ' ')[0]}"
-                        >Default</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs dropdown-icon transition-transform duration-200" th:id="${name.processName} + '-icon'"></i>
-                </button>
-
-                <div class="submenu mt-1 ml-10" th:id="${name.processName} + '-submenu'" style="max-height: 0px;">
-                    <a th:href="@{'/processes/' + ${name.processKey}}" th:text="${name.processName}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Account</a>
-                    <a th:href="@{'/tasks/' + ${name.processKey}}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Tasks</a>
-                    <a th:href="@{'/forms/' + ${name.processKey}}" class="block py-2 px-3 rounded-lg transition-all duration-200 text-sm opacity-0">Manage Forms</a>
-                </div>
+<body class="flex h-screen bg-gray-800">
+    <!-- Mobile sidebar overlay -->
+    <div class="sidebar-overlay lg:hidden"></div>
+    
+    <!-- Collapsed White Sidebar -->
+    <aside class="sidebar w-32 bg-white border-r border-gray-200 flex flex-col justify-between fixed lg:relative h-screen overflow-y-auto z-40">
+        <div class="p-4">
+            <!-- Logo and Brand -->
+            <div class="flex flex-col items-center mb-8 space-y-2">
+                <img src="/images/logo.svg" class="w-8 h-8">
             </div>
 
-            <!--<a class="f lex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/processes}"
-               th:classappend="${currentPath == '/processes'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">sync_alt</span>
-                <span>Cases</span>
-            </a>
-            <a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"  th:href="@{/forms}"
-               th:classappend="${currentPath == '/forms'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">note_add</span>
-                <span>Task Forms</span>
-            </a>-->
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/report}"
-               th:classappend="${currentPath == '/report'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">bar_chart</span>
-                <span>Reports</span>
-            </a>
-            <!--<a th:if="${session.isAdmin}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/users}"
-               th:classappend="${currentPath == '/users'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">group</span>
-                <span>User Management</span>
-            </a>-->
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/invoice}"
-               th:classappend="${currentPath == '/invoice'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">receipt_long</span>
-                <span>Invoices</span>
-            </a>
-
-            <a th:if="${session.isManager}" class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg"
-               th:href="@{/invoice/invoice-review}"
-               th:classappend="${currentPath == '/invoice/invoice-review'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">receipt_long</span>
-                <span>Invoice Review</span>
-            </a>
-
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/chat}"
-               th:classappend="${currentPath == '/chat'} ? ' bg-blue-600'">
-                <span class="material-icons mr-3">chat</span>
-                <span>Chat</span>
-            </a>
-            <a class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-700 rounded-lg" th:href="@{/gallery}"
-               th:classappend="${currentPath == '/gallery' or currentPath == '/addFile'} ? ' bg-blue-600'">
-            <span class="material-icons mr-3">collections</span>
-                <span>Gallery</span>
+            <!-- Navigation -->
+            <nav class="space-y-4">
+                <!-- Home - Active State -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg"
+                   th:href="@{/home}"
+                   th:classappend="${currentPath == '/home'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/home'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/home'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                        <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">Home</span>
+                </a>
+                
+                <!-- All Support Inbox -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg" 
+                   th:href="@{/chat}"
+                   th:classappend="${currentPath == '/chat'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/chat'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/chat'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
+                        <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">All support Inbox</span>
+                </a>
+                
+                <!-- Communities -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg" 
+                   th:href="@{/gallery}"
+                   th:classappend="${currentPath == '/gallery'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/gallery'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/gallery'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 01-1.019-4.38z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">Communities</span>
+                </a>
+                
+                <!-- Analytics -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg" 
+                   th:href="@{/report}"
+                   th:classappend="${currentPath == '/report'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/report'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/report'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">Analytics</span>
+                </a>
+                
+                <!-- Organization Support -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg" 
+                   th:href="@{/invoice}"
+                   th:classappend="${currentPath == '/invoice'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/invoice'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/invoice'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
+                        <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">Organization Support</span>
+                </a>
+                
+                <!-- Organization General Channel -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg" 
+                   th:href="@{/gallery}"
+                   th:classappend="${currentPath == '/gallery'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/gallery'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.972 5.972 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/gallery'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path fill-rule="evenodd" d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 9.75a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25zm0 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">Organization General Channel</span>
+                </a>
+                
+                <!-- Organization Townhall -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg" 
+                   th:href="@{/gallery}"
+                   th:classappend="${currentPath == '/gallery'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/gallery'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/gallery'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path d="M11.584 2.376a.75.75 0 01.832 0l9 6a.75.75 0 11-.832 1.248L12 3.901 3.416 9.624a.75.75 0 01-.832-1.248l9-6z" />
+                        <path d="M20.25 11.25v6.75a3 3 0 01-3 3H6.75a3 3 0 01-3-3v-6.75m18 0V9.375c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.875m18 0h.008v.008h-.008v-.008z" />
+                        <path d="M3.375 15h17.25c.621 0 1.125-.504 1.125-1.125v-6.375c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v6.375c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">Organization Townhall</span>
+                </a>
+                
+                <!-- Separator Line -->
+                <div class="border-t border-gray-300 my-4 mx-2"></div>
+                
+                <!-- Help -->
+                <a class="flex flex-col items-center px-2 py-3 text-gray-500 hover:text-gray-700 transition-all duration-200 rounded-lg" 
+                   th:href="@{/gallery}"
+                   th:classappend="${currentPath == '/gallery'} ? ' text-primary bg-primary-light'">
+                    <!-- Outline version (inactive) -->
+                    <svg th:if="${currentPath != '/gallery'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                    </svg>
+                    <!-- Filled version (active) -->
+                    <svg th:if="${currentPath == '/gallery'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mb-1">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.989-1.129c1.453-1.272 3.776-1.272 5.229 0 .75.75 0 01-.989 1.129zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-2xs font-medium text-center">Help</span>
             </a>
         </nav>
     </div>
-</aside>
-<main class="main-content flex-1 flex flex-col overflow-x-hidden">
-    <header class="flex items-center justify-between p-4 md:p-6 border-b border-slate-800">
-        <div class="flex items-center">
-            <button id="menu-toggle" class="text-slate-400 mr-4 lg:hidden">
-                <span class="material-icons">menu</span>
-            </button>
-            <div class="search-container relative">
-                <span class="material-icons search-icon">search</span>
-                <input class="search-input text-white rounded-lg pl-10 pr-4 py-2 w-40 md:w-64 lg:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search" type="text"/>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-gray-300">
+            <div class="flex flex-col items-center space-y-2">
+                <div class="relative">
+                    <img alt="User avatar" class="w-8 h-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1TNQQ4ccZFKvYjRCc-rE6p0QuKlFhfQYUbx1rZZS3ODc_DtNgl6b-1LYcXbxLfeyClRY0GHzY0wvA4-gyFvp5IfVYOVVgdn9H8XRZv3JFNrNWD46u6DL1PQ9JlEVx6QzF2e1pOeuEa8VmW1V-2uuTOORkf0lCwPlKUWwAJnIPGOrCMC99VYhvwvozKwbk84CId3PYToMrt_Q3zg6mp4TZb_REXlsSWHPsOl7wS56kpGKt71JHpGs9hK7omvmX9jsYW33esDwKMlVU"/>
+                    <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-white"></div>
+            </div>
             </div>
         </div>
-        <div class="flex items-center space-x-4 md:space-x-6">
-            <button id="mode-toggle" class="text-slate-400">
-                <span class="material-icons">nightlight_round</span>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content flex-1 flex flex-col overflow-x-hidden bg-gray-50">
+        <!-- Mobile menu toggle -->
+        <div class="lg:hidden p-4">
+            <button id="menu-toggle" class="text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
             </button>
-            <button class="text-slate-400 relative">
-                <span class="material-icons">notifications</span>
-                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            <img alt="User avatar" class="w-8 h-8 md:w-10 md:h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1TNQQ4ccZFKvYjRCc-rE6p0QuKlFhfQYUbx1rZZS3ODc_DtNgl6b-1LYcXbxLfeyClRY0GHzY0wvA4-gyFvp5IfVYOVVgdn9H8XRZv3JFNrNWD46u6DL1PQ9JlEVx6QzF2e1pOeuEa8VmW1V-2uuTOORkf0lCwPlKUWwAJnIPGOrCMC99VYhvwvozKwbk84CId3PYToMrt_Q3zg6mp4TZb_REXlsSWHPsOl7wS56kpGKt71JHpGs9hK7omvmX9jsYW33esDwKMlVU"/>
         </div>
-    </header>
-    <section layout:fragment="content">
-    </section>
-
-</main>
-
-<!-- Support Chat Button -->
-<button id="support-chat-btn" class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-50 hover:scale-110">
-    <span class="material-icons text-2xl">headset_mic</span>
-</button>
-
-<!-- Chat Box -->
-<div id="chat-box" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-120 h-196 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 hidden flex-col max-sm:w-full max-sm:h-full max-sm:top-0 max-sm:left-0 max-sm:transform-none max-sm:rounded-none" style="background-color: rgb(30, 41, 59);">
-    <!-- Chat Header -->
-    <div id="chat-header" class="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-900 rounded-t-lg max-sm:rounded-none cursor-move" style="background-color: rgb(15, 23, 42);">
-        <div class="flex items-center space-x-2">
-            <span class="material-icons text-blue-400">support_agent</span>
-            <h3 class="text-white font-semibold">Support Chat</h3>
-            <div class="w-2 h-2 bg-green-500 rounded-full ml-2"></div>
-        </div>
-        <button id="close-chat-btn" class="text-slate-400 hover:text-white transition-colors">
-            <span class="material-icons">close</span>
-        </button>
-    </div>
-
-    <!-- Chat Messages -->
-    <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-800">
-        <div class="flex items-start space-x-2">
-            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <span class="material-icons text-white text-sm">support_agent</span>
-            </div>
-            <div class="bg-slate-700 text-white p-3 rounded-lg rounded-tl-none max-w-xs">
-                <p class="text-sm">Hello! I'm here to help you with any Legal related question. How can I assist you today?</p>
-                <span class="text-xs text-slate-400 mt-1 block">Just now</span>
+        
+        <!-- Floating Header Container -->
+        <div class="px-6 pt-6">
+            <!-- Header Fragment -->
+            <header layout:fragment="header" class="floating-header">
+                <!-- Default header content -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-1 h-8 bg-primary rounded-full"></div>
+                        <div class="space-y-2">
+                            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Home</h1>
+                            <p class="text-gray-600">Welcome to your home page</p>
             </div>
         </div>
     </div>
-
-    <!-- Chat Input -->
-    <div class="p-4 border-t border-slate-700 bg-slate-900">
-        <div class="flex space-x-2">
-            <input
-                    id="chat-input"
-                    type="text"
-                    placeholder="Type your message..."
-                    class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400"
-                    style="background-color: rgb(51, 65, 85); color: white;"
-            />
-            <button
-                    id="send-message-btn"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                <span class="material-icons text-sm">send</span>
-            </button>
+            </header>
         </div>
-        <div class="flex items-center mt-2 text-xs text-slate-400">
-            <span class="material-icons text-xs mr-1">info</span>
-            <span>Press Enter to send</span>
+        
+        <!-- Main Content Area with Rounded Edges -->
+        <div class="flex-1 px-6 pb-6 mt-6">
+            <!-- Content Fragment -->
+            <section layout:fragment="content" class="page-content">
+                <!-- Default content -->
+                <div class="text-center py-16">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome to ZAM</h2>
+                    <p class="text-gray-600">Select a menu item to get started</p>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
 </div>
-<!-- Theme toggle is handled by app.js -->
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>
@@ -267,8 +252,6 @@
 
 <!-- Custom JS -->
 <script th:src="@{/js/app.js}"></script>
-
-<!-- Debug script for mode toggle -->
 
 </body>
 </html>

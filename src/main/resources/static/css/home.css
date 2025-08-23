@@ -1,0 +1,233 @@
+/* Home Page Specific Styles */
+
+/* Floating Header */
+.floating-header {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6;
+}
+
+/* Page Content */
+.page-content {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+}
+
+/* Global Header */
+.global-header {
+    @apply flex items-center justify-between mb-6;
+}
+
+.global-header h1 {
+    @apply text-2xl font-bold text-gray-900;
+}
+
+.global-header .header-actions {
+    @apply flex items-center space-x-3;
+}
+
+/* Explore Section */
+.explore-section {
+    @apply mb-8;
+}
+
+.explore-header {
+    @apply flex items-center justify-between mb-6;
+}
+
+.explore-title {
+    @apply flex items-center space-x-3;
+}
+
+.explore-title .accent-bar {
+    @apply w-1 h-8 bg-blue-500 rounded-full;
+}
+
+.explore-title h2 {
+    @apply text-xl font-bold text-gray-900;
+}
+
+.explore-actions {
+    @apply flex items-center space-x-3;
+}
+
+/* Tab Navigation */
+.tab-container {
+    @apply flex items-center justify-center space-x-1 mb-6 bg-gray-100 p-1 rounded-lg;
+}
+
+.tab-button {
+    @apply px-6 py-2 rounded-lg font-medium transition-all duration-200 cursor-pointer;
+}
+
+.tab-button.tab-active {
+    background-color: #242063;
+    color: white;
+}
+
+.tab-button.tab-inactive {
+    @apply bg-gray-100 text-gray-600 hover:bg-gray-200;
+}
+
+/* Tab Content */
+.tab-content {
+    @apply w-full;
+}
+
+.tab-pane {
+    @apply w-full;
+}
+
+.tab-pane.hidden {
+    @apply hidden;
+}
+
+.tab-pane.active {
+    @apply block;
+}
+
+/* Community Grid */
+.community-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Community Cards */
+.community-card {
+    @apply p-4 rounded-lg border-2 border-gray-300 hover:shadow-md transition-all duration-200 relative;
+    min-height: 120px;
+}
+
+/* Broker Dealer Cards - Different Background Colors */
+.broker-dealer-card:nth-child(6n+1) {
+    background-color: #FFE8FC;
+}
+
+.broker-dealer-card:nth-child(6n+2) {
+    background-color: #FFF7E8;
+}
+
+.broker-dealer-card:nth-child(6n+3) {
+    background-color: #E8F4FD;
+}
+
+.broker-dealer-card:nth-child(6n+4) {
+    background-color: #E8FDE8;
+}
+
+.broker-dealer-card:nth-child(6n+5) {
+    background-color: #FDE8E8;
+}
+
+.broker-dealer-card:nth-child(6n+6) {
+    background-color: #F8E8FD;
+}
+
+.iss-subgroup-card {
+    @apply bg-white;
+}
+
+/* Community Avatar */
+.community-avatar {
+    @apply w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0;
+}
+
+.broker-dealer-avatar {
+    @apply bg-gray-900;
+}
+
+.iss-subgroup-avatar {
+    @apply bg-gradient-to-br from-pink-400 to-blue-500;
+}
+
+.avatar-cube {
+    @apply w-6 h-6 bg-white rounded-sm;
+}
+
+/* Community Content */
+.community-title {
+    @apply text-lg font-semibold text-gray-900 mb-1;
+}
+
+.community-meta {
+    @apply text-sm text-gray-600;
+}
+
+.members-count {
+    @apply text-sm text-gray-600;
+}
+
+.admin-message {
+    @apply text-sm text-gray-600;
+}
+
+/* Metrics */
+.metric-item {
+    @apply flex items-center space-x-1 text-sm text-gray-700;
+}
+
+.metric-badge {
+    @apply px-2 py-1 text-white text-xs font-medium rounded-md;
+    background-color: #242063;
+}
+
+.iss-badge {
+    @apply px-2 py-1 text-white text-xs font-medium rounded-md;
+    background-color: #EC4899;
+}
+
+.time-stamp {
+    @apply text-sm text-gray-500;
+}
+
+/* Action Button */
+.more-options {
+    @apply p-1 hover:bg-gray-100 rounded transition-colors duration-200;
+}
+
+/* Empty State */
+.empty-state {
+    @apply text-center py-12;
+}
+
+.empty-state.hidden {
+    @apply hidden;
+}
+
+.empty-state img {
+    @apply mx-auto mb-4 w-32 h-32 opacity-50;
+}
+
+.empty-state h3 {
+    @apply text-lg font-medium text-gray-900 mb-2;
+}
+
+.empty-state p {
+    @apply text-gray-600 mb-6;
+}
+
+/* Button Components */
+.btn-primary-outline {
+    @apply px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200;
+}
+
+.btn-primary-filled {
+    @apply px-4 py-2 text-white rounded-lg transition-colors duration-200;
+    background-color: #242063;
+}
+
+.btn-primary-filled:hover {
+    background-color: #1a1a4a;
+}
+
+.btn-secondary {
+    @apply px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors duration-200;
+}
+
+/* Ensure buttons with colored backgrounds have white text */
+button[style*="background-color: #242063"] {
+    color: white !important;
+}
+
+button[style*="background-color: #242063"]:hover {
+    background-color: #1a1a4a !important;
+}

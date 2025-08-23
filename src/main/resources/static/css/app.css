@@ -3,757 +3,409 @@
 @import 'components.css';
 @import 'utilities.css';
 
-/* Theme transition styles */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+/* Light theme with #242063 primary color */
+html, body {
+  background-color: #ffffff;
+  color: #111827;
 }
 
-/* Ensure proper theme initialization */
-html.dark {
-  color-scheme: dark;
+/* Primary color overrides to #242063 */
+.bg-blue-600 { background-color: #242063 !important; }
+.hover\:bg-blue-700:hover { background-color: #1e1b53 !important; }
+.text-blue-600 { color: #242063 !important; }
+.border-blue-600 { border-color: #242063 !important; }
+.ring-blue-500 { --tw-ring-color: #242063 !important; }
+
+/* New primary color classes for the redesigned layout */
+.bg-primary { background-color: #242063 !important; }
+.bg-primary-dark { background-color: #1e1b53 !important; }
+.bg-primary-light { background-color: #f3f4f6 !important; }
+.text-primary { color: #242063 !important; }
+.border-primary { border-color: #242063 !important; }
+.ring-primary { --tw-ring-color: #242063 !important; }
+
+/* Component overrides */
+.dashboard-start-process-btn { background-color: #242063 !important; }
+.dashboard-metric-card { background-color: #242063 !important; color: #ffffff !important; }
+.brand-title { color: #242063 !important; }
+
+/* Light theme base styles */
+.sidebar { background-color: #ffffff !important; color: #111827 !important; }
+.main-content { background-color: #ffffff !important; color: #111827 !important; }
+.card { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+.form-card { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+.processes-card { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+.process-card { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+.task-card { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+.form-container { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+
+/* Table styles */
+.table-header, .table-row { border-bottom: 1px solid #e5e7eb !important; }
+.table-container { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+
+/* Input styles */
+.search-input { background-color: #ffffff !important; color: #111827 !important; border: 1px solid #e5e7eb !important; }
+.search-input::placeholder { color: #6b7280 !important; }
+
+/* Dropdown styles */
+.dropdown-menu { background-color: #ffffff !important; color: #111827 !important; border: 1px solid #e5e7eb !important; }
+.dropdown-item { color: #111827 !important; }
+.dropdown-item:hover { background-color: #f9fafb !important; }
+
+/* Empty state styles */
+.empty-state, .empty-state-title { color: #111827 !important; }
+.empty-state-icon { color: #d1d5db !important; }
+
+/* Text color overrides */
+.text-white { color: #111827 !important; }
+.text-slate-400 { color: #6b7280 !important; }
+.text-slate-300 { color: #9ca3af !important; }
+
+/* Additional component overrides */
+.bg-slate-800 { background-color: #ffffff !important; }
+.bg-slate-700 { background-color: #f9fafb !important; }
+.bg-slate-600 { background-color: #e5e7eb !important; }
+.border-slate-700 { border-color: #e5e7eb !important; }
+.border-slate-800 { border-color: #e5e7eb !important; }
+
+/* New layout components */
+.floating-header {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
 }
 
-html:not(.dark) {
-  color-scheme: light;
+.global-header {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
 }
 
-/* Light Mode Overrides */
-body.light-mode {
-    background-color: #f4f8fb;
-    color: #1E293B;
+.page-content {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    min-height: calc(100vh - 200px);
 }
 
-body.light-mode .sidebar {
-    background-color: #fff;
-    color: #1E293B;
+
+
+/* Reusable Button Components */
+
+
+
+
+/* Collapsed Sidebar styling */
+.sidebar {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border-right: 1px solid #e5e7eb !important;
+    width: 8rem !important; /* 128px - w-32 */
 }
 
-body.light-mode .main-content {
-    background-color: #f4f8fb;
-    color: #1E293B;
+/* Active state styling - light purple background with dark purple text */
+.sidebar .text-primary {
+    color: #242063 !important;
 }
 
-body.light-mode .card,
-body.light-mode .form-card,
-body.light-mode .processes-card,
-body.light-mode .process-card,
-body.light-mode .task-card,
-body.light-mode .form-container {
-    background-color: #fff !important;
-    color: #1E293B !important;
-    border-color: #e0e0e0 !important;
+.sidebar .bg-primary-light {
+    background-color: rgba(36, 32, 99, 0.1) !important; /* Light purple background */
 }
 
-body.light-mode .table-header,
-body.light-mode .table-row,
-body.light-mode .table-container {
-    background-color: #fff !important;
-    color: #1E293B !important;
-    border-bottom: 1px solid #e0e0e0 !important;
+/* Smaller text size for sidebar */
+.text-2xs {
+    font-size: 0.625rem !important; /* 10px */
+    line-height: 0.75rem !important;
 }
 
-body.light-mode .search-input {
-    background-color: #fff !important;
-    color: #1E293B !important;
-    border: 1px solid #e0e0e0 !important;
-}
-
-body.light-mode .search-input::placeholder {
-    color: #666 !important;
-}
-
-body.light-mode .dropdown-menu {
-    background-color: #fff !important;
-    color: #1E293B !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .dropdown-item {
-    color: #1E293B !important;
-}
-
-body.light-mode .dropdown-item:hover {
-    background-color: #f4f8fb !important;
-}
-
-body.light-mode .empty-state,
-body.light-mode .empty-state-title {
-    color: #1E293B !important;
-}
-
-body.light-mode .empty-state-icon {
-    color: #e0e0e0 !important;
-}
-
-body.light-mode .status-in-progress {
-    background-color: #e0e7ff !important;
-    color: #1D4ED8 !important;
-}
-
-body.light-mode .status-opened {
-    background-color: #fee2e2 !important;
-    color: #991B1B !important;
-}
-
-body.light-mode .status-completed {
-    background-color: #bbf7d0 !important;
-    color: #166534 !important;
-}
-
-body.light-mode .view-all-link {
-    color: #1D4ED8 !important;
-}
-
-body.light-mode .view-all-link:hover {
-    color: #0F172A !important;
-}
-
-body.light-mode .modal-backdrop {
-    background-color: rgba(0,0,0,0.2) !important;
-}
-
-/* Light mode: override header and sidebar text colors */
-body.light-mode .text-white,
-body.light-mode .sidebar .text-white,
-body.light-mode .main-content .text-white,
-body.light-mode h1.text-white,
-body.light-mode h2.text-white,
-body.light-mode h3.text-white,
-body.light-mode h4.text-white,
-body.light-mode h5.text-white,
-body.light-mode h6.text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode .text-slate-400,
-body.light-mode .main-content .text-slate-400 {
-    color: #64748B !important;
-}
-
-body.light-mode .text-slate-300 {
-    color: #334155 !important;
-}
-
-body.light-mode .input-field {
-    background-color: #fff !important;
-    color: #1E293B !important;
-    border: 1px solid #e0e0e0 !important;
-}
-
-body.light-mode .sidebar .bg-blue-600 {
-    background-color: #6366F1 !important;
-    color: #fff !important;
-}
-body.light-mode .sidebar .bg-blue-600 .material-icons,
-body.light-mode .sidebar .bg-blue-600 span {
-    color: #fff !important;
-}
-body.light-mode .brand-title,
-body.light-mode .sidebar .brand-title {
-    color: #6366F1 !important;
-}
-
-/* Dashboard metric cards in light mode */
-body.light-mode .dashboard-metric-card {
-    background-color: #6366F1 !important;
-    color: #fff !important;
-}
-body.light-mode .dashboard-metric-card,
-body.light-mode .dashboard-metric-card *,
-body.light-mode .dashboard-metric-card p,
-body.light-mode .dashboard-metric-card span,
-body.light-mode .dashboard-metric-card a,
-body.light-mode .dashboard-metric-card .material-icons {
-    color: #fff !important;
-}
-
-/* Light mode: Start New Process button on dashboard */
-body.light-mode .dashboard-start-process-btn {
-    background-color: #6366F1 !important;
-    color: #fff !important;
-    border: none !important;
-}
-body.light-mode .dashboard-start-process-btn .material-icons {
-    color: #fff !important;
-}
-
-/* Fix for metric cards and start process button in light mode */
-body.light-mode .dashboard-metric-card .text-white,
-body.light-mode .dashboard-metric-card.text-white,
-body.light-mode .dashboard-start-process-btn .text-white,
-body.light-mode .dashboard-start-process-btn.text-white {
-    color: #fff !important;
-}
-
-/* Fix for metric cards and start process button in light mode */
-body.light-mode .dashboard-metric-card .text-white,
-body.light-mode .dashboard-metric-card.text-white,
-body.light-mode .dashboard-start-process-btn .text-white,
-body.light-mode .dashboard-start-process-btn.text-white {
-    color: #fff !important;
-}
-
-/* Force chat modal and input to be dark in dark mode */
-html.dark #new-chat-modal > div {
-  background: #1e293b !important;
-  color: #fff !important;
-}
-html.dark #new-chat-modal input {
-  background: #334155 !important;
-  color: #fff !important;
-  border-color: #334155 !important;
-}
-html.dark #chat-form {
-  background: #1e293b !important;
-}
-html.dark #chat-input {
-  background: #334155 !important;
-  color: #fff !important;
-  border-color: #334155 !important;
-}
-
-/* Force chat input to be theme-aware */
-html.dark #chat-form {
-    background: #0f172a !important;
-    border-color: #334155 !important;
-}
-
-html.dark #user-chat-input {
-    background: #1e293b !important;
-    color: #ffffff !important;
-    border-color: #475569 !important;
-}
-
-body.light-mode #chat-form {
-    background: #ffffff !important;
-    border-color: #e2e8f0 !important;
-}
-
-body.light-mode #user-chat-input {
-    background: #f1f5f9 !important;
-    color: #0f172a !important;
-    border-color: #cbd5e1 !important;
-}
-
-/* Force new chat modal to be theme-aware */
-html.dark #new-chat-modal > div {
-    background: #1e293b !important;
-    border-color: #475569 !important;
+/* Button text should be white when using primary background */
+.bg-primary, .bg-blue-600 {
     color: #ffffff !important;
 }
 
-html.dark #new-chat-modal h3,
-html.dark #new-chat-modal label {
+.bg-primary:hover, .bg-blue-600:hover {
     color: #ffffff !important;
 }
 
-html.dark #new-chat-modal input {
-    background: #334155 !important;
-    color: #ffffff !important;
-    border-color: #475569 !important;
-}
-
-html.dark #cancel-new-chat {
-    background: #475569 !important;
-    color: #ffffff !important;
-}
-
-body.light-mode #new-chat-modal > div {
-    background: #ffffff !important;
-    border-color: #e2e8f0 !important;
-    color: #0f172a !important;
-}
-
-body.light-mode #new-chat-modal h3,
-body.light-mode #new-chat-modal label {
-    color: #0f172a !important;
-}
-
-body.light-mode #new-chat-modal input {
-    background: #f8fafc !important;
-    color: #0f172a !important;
-    border-color: #cbd5e1 !important;
-}
-
-body.light-mode #cancel-new-chat {
-    background: #e2e8f0 !important;
-    color: #0f172a !important;
-}
-
-/* Comprehensive Chat Theme Support */
-body.light-mode .chat-sidebar {
-    background-color: #fff !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .chat-sidebar h2,
-body.light-mode .chat-sidebar .text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode .chat-sidebar .search-input {
-    background-color: #f8fafc !important;
-    color: #1E293B !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .chat-sidebar .search-input::placeholder {
-    color: #64748b !important;
-}
-
-body.light-mode .chat-sidebar .border-gray-700 {
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .chat-header {
-    background-color: #fff !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .chat-header .text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode .chat-header .text-gray-400 {
-    color: #64748b !important;
-}
-
-body.light-mode .chat-input-area {
-    background-color: #fff !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .chat-input-area .text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode .chat-input-area .text-gray-400 {
-    color: #64748b !important;
-}
-
-body.light-mode .chat-input-area input {
-    color: #1E293B !important;
-}
-
-body.light-mode .chat-input-area input::placeholder {
-    color: #64748b !important;
-}
-
-body.light-mode .chat-input-area .bg-gray-700 {
-    background-color: #f1f5f9 !important;
-}
-
-body.light-mode .chat-input-area .bg-gray-700 input {
-    background-color: transparent !important;
-}
-
-body.light-mode .message-in {
-    background-color: #f1f5f9 !important;
-    color: #1E293B !important;
-}
-
-body.light-mode .message-out {
-    background-color: #2563eb !important;
-    color: white !important;
-}
-
-body.light-mode .empty-chat-state {
-    color: #64748b !important;
-}
-
-body.light-mode .empty-chat-icon {
-    color: #94a3b8 !important;
-}
-
-body.light-mode .empty-chat-title {
-    color: #1E293B !important;
-}
-
-body.light-mode .empty-chat-subtitle {
-    color: #64748b !important;
-}
-
-body.light-mode .modal-content {
-    background-color: #fff !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .modal-header {
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .modal-header .text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode .modal-body .text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode .modal-body .text-gray-400 {
-    color: #64748b !important;
-}
-
-body.light-mode .user-item:hover {
-    background-color: #f8fafc !important;
-}
-
-body.light-mode .user-item .text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode .user-item .text-gray-400 {
-    color: #64748b !important;
-}
-
-body.light-mode .chat-item {
-    color: #1E293B !important;
-}
-
-body.light-mode .chat-item:hover {
-    background-color: #f8fafc !important;
-}
-
-body.light-mode .chat-item.active-chat {
-    background-color: #e0e7ff !important;
-}
-
-body.light-mode .no-conversations {
-    color: #64748b !important;
-}
-
-body.light-mode .no-conversations-icon {
-    color: #94a3b8 !important;
-}
-
-/* Chat scrollbar theme support */
-body.light-mode ::-webkit-scrollbar-track {
-    background: #f1f5f9 !important;
-}
-
-body.light-mode ::-webkit-scrollbar-thumb {
-    background: #cbd5e1 !important;
-}
-
-/* Chat modal theme support */
-body.light-mode .modal-overlay {
-    background-color: rgba(0, 0, 0, 0.2) !important;
-}
-
-/* Dark mode chat overrides to ensure consistency */
-html.dark .chat-sidebar {
-    background-color: #1f2937 !important;
-    border-color: #374151 !important;
-}
-
-html.dark .chat-header {
-    background-color: #1f2937 !important;
-    border-color: #374151 !important;
-}
-
-html.dark .chat-input-area {
-    background-color: #1f2937 !important;
-    border-color: #374151 !important;
-}
-
-html.dark .message-in {
-    background-color: #374151 !important;
-    color: #f9fafb !important;
-}
-
-html.dark .message-out {
-    background-color: #2563eb !important;
-    color: white !important;
-}
-
-/* Additional chat theme support for dynamic elements */
-body.light-mode .messages-container {
-    background-color: #fff !important;
-}
-
-body.light-mode .messages-container .message-in {
-    background-color: #f1f5f9 !important;
-    color: #1E293B !important;
-}
-
-body.light-mode .messages-container .message-out {
-    background-color: #2563eb !important;
-    color: white !important;
-}
-
-/* Chat item hover states */
-body.light-mode .chat-item:hover {
-    background-color: #f8fafc !important;
-}
-
-body.light-mode .chat-item.active-chat {
-    background-color: #e0e7ff !important;
-    color: #1E293B !important;
-}
-
-/* Modal input fields */
-body.light-mode .modal-body input {
-    background-color: #f8fafc !important;
-    color: #1E293B !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .modal-body input::placeholder {
-    color: #64748b !important;
-}
-
-/* Chat status indicators */
-body.light-mode .text-green-500 {
-    color: #10b981 !important;
-}
-
-body.light-mode .text-red-500 {
-    color: #ef4444 !important;
-}
-
-/* Chat avatar backgrounds */
-body.light-mode .bg-blue-500 {
-    background-color: #3b82f6 !important;
-}
-
-body.light-mode .bg-gray-600 {
-    background-color: #94a3b8 !important;
-}
-
-/* Gallery Theme Support */
-body.light-mode .bg-gray-800 {
-    background-color: #fff !important;
-    border-color: #e0e0e0 !important;
-}
-
-body.light-mode .bg-gray-700 {
-    background-color: #f8fafc !important;
-}
-
-body.light-mode .text-gray-400 {
-    color: #64748b !important;
-}
-
-body.light-mode .text-gray-300 {
-    color: #475569 !important;
-}
-
-body.light-mode .text-gray-500 {
+/* Inactive state styling */
+.sidebar .text-gray-500 {
     color: #6b7280 !important;
 }
 
-body.light-mode .text-white {
-    color: #1E293B !important;
+.sidebar .text-gray-500:hover {
+    color: #374151 !important;
 }
 
-/* Gallery search bar */
-body.light-mode .search-bar2 {
-    background-color: #f8fafc !important;
-    color: #1E293B !important;
-    border: 1px solid #e0e0e0 !important;
+.sidebar .hover\:bg-gray-50:hover {
+    background-color: #f9fafb !important;
 }
 
-body.light-mode .search-bar2::placeholder {
-    color: #64748b !important;
+/* Text sizing for collapsed sidebar */
+.sidebar .text-xs {
+    font-size: 0.75rem !important;
+    line-height: 1rem !important;
 }
 
-/* Gallery file tabs */
-body.light-mode #file-tabs {
-    background-color: #f1f5f9 !important;
+/* Icon sizing */
+.sidebar .material-icons {
+    font-size: 1.5rem !important;
 }
 
-body.light-mode .file-tab {
-    color: #64748b !important;
+/* Navigation item spacing */
+.sidebar nav .space-y-4 > * + * {
+    margin-top: 1rem !important;
 }
 
-body.light-mode .file-tab:hover {
-    background-color: #e2e8f0 !important;
-    color: #1E293B !important;
+/* Separator line styling */
+.sidebar .border-t {
+    border-top: 1px solid #e5e7eb !important;
 }
 
-body.light-mode .file-tab.bg-blue-600 {
-    background-color: #3b82f6 !important;
-    color: white !important;
+/* Mobile sidebar overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 30;
+    display: none;
 }
 
-/* Gallery table */
-body.light-mode .bg-gray-800.rounded-lg {
-    background-color: #fff !important;
-    border: 1px solid #e0e0e0 !important;
+.sidebar-overlay.active {
+    display: block;
 }
 
-body.light-mode table thead {
-    background-color: #f8fafc !important;
+/* Mobile sidebar behavior */
+@media (max-width: 1023px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
 }
 
-body.light-mode table thead th {
-    color: #1E293B !important;
+/* Contextual header responsive adjustments */
+@media (max-width: 768px) {
+    .contextual-header {
+        margin: 1rem;
+        padding: 1rem;
+    }
+    
+    .contextual-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .contextual-header .flex-col {
+        gap: 1rem;
+    }
 }
 
-body.light-mode table tbody tr {
-    border-color: #e0e0e0 !important;
+/* Additional light theme overrides */
+.sidebar .bg-blue-600 { background-color: #242063 !important; color: #ffffff !important; }
+.sidebar .bg-blue-600 .material-icons, .sidebar .bg-blue-600 span { color: #ffffff !important; }
+
+/* Dashboard metric cards */
+.dashboard-metric-card { background-color: #242063 !important; color: #ffffff !important; }
+.dashboard-metric-card *, .dashboard-metric-card p, .dashboard-metric-card span, 
+.dashboard-metric-card a, .dashboard-metric-card .material-icons { color: #ffffff !important; }
+
+/* Start New Process button */
+.dashboard-start-process-btn { background-color: #242063 !important; color: #ffffff !important; border: none !important; }
+.dashboard-start-process-btn .material-icons { color: #ffffff !important; }
+
+/* Chat modal styles */
+#new-chat-modal > div { background: #ffffff !important; color: #111827 !important; }
+#new-chat-modal input { background: #f9fafb !important; color: #111827 !important; border-color: #e5e7eb !important; }
+#chat-form { background: #ffffff !important; border-color: #e5e7eb !important; }
+#chat-input { background: #f9fafb !important; color: #111827 !important; border-color: #e5e7eb !important; }
+#user-chat-input {
+    background: #f9fafb !important;
+    color: #111827 !important;
+    border-color: #e5e7eb !important;
 }
 
-body.light-mode table tbody tr:hover {
-    background-color: #f8fafc !important;
-}
+/* Chat component styles */
+.chat-sidebar { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+.chat-sidebar h2, .chat-sidebar .text-white { color: #111827 !important; }
+.chat-sidebar .search-input { background-color: #f9fafb !important; color: #111827 !important; border-color: #e5e7eb !important; }
+.chat-sidebar .search-input::placeholder { color: #6b7280 !important; }
+.chat-sidebar .border-gray-700 { border-color: #e5e7eb !important; }
 
-body.light-mode .file-row {
-    border-color: #e0e0e0 !important;
-}
+.chat-header { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+.chat-header .text-white { color: #111827 !important; }
+.chat-header .text-gray-400 { color: #6b7280 !important; }
 
-body.light-mode .file-row:hover {
-    background-color: #f8fafc !important;
-}
+.chat-input-area { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+.chat-input-area .text-white { color: #111827 !important; }
+.chat-input-area .text-gray-400 { color: #6b7280 !important; }
+.chat-input-area input { color: #111827 !important; }
+.chat-input-area input::placeholder { color: #6b7280 !important; }
+.chat-input-area .bg-gray-700 { background-color: #f9fafb !important; }
+.chat-input-area .bg-gray-700 input { background-color: transparent !important; }
 
-body.light-mode .file-row td {
-    color: #1E293B !important;
-}
+.message-in { background-color: #f9fafb !important; color: #111827 !important; }
+.message-out { background-color: #242063 !important; color: #ffffff !important; }
+
+.empty-chat-state { color: #6b7280 !important; }
+.empty-chat-icon { color: #9ca3af !important; }
+.empty-chat-title { color: #111827 !important; }
+.empty-chat-subtitle { color: #6b7280 !important; }
+
+.modal-content { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+.modal-header { border-color: #e5e7eb !important; }
+.modal-header .text-white { color: #111827 !important; }
+.modal-body .text-white { color: #111827 !important; }
+.modal-body .text-gray-400 { color: #6b7280 !important; }
+
+.user-item:hover { background-color: #f9fafb !important; }
+.user-item .text-white { color: #111827 !important; }
+.user-item .text-white { color: #111827 !important; }
+.user-item .text-gray-400 { color: #6b7280 !important; }
+
+.chat-item { color: #111827 !important; }
+.chat-item:hover { background-color: #f9fafb !important; }
+.chat-item.active-chat { background-color: #e0e7ff !important; }
+
+.no-conversations { color: #6b7280 !important; }
+.no-conversations-icon { color: #9ca3af !important; }
+
+/* Scrollbar styles */
+::-webkit-scrollbar-track { background: #f9fafb !important; }
+::-webkit-scrollbar-thumb { background: #d1d5db !important; }
+
+/* Modal overlay */
+.modal-overlay { background-color: rgba(0, 0, 0, 0.2) !important; }
+
+/* Gallery and file management styles */
+.messages-container { background-color: #ffffff !important; }
+.messages-container .message-in { background-color: #f9fafb !important; color: #111827 !important; }
+.messages-container .message-out { background-color: #242063 !important; color: #ffffff !important; }
+
+.chat-item:hover { background-color: #f9fafb !important; }
+.chat-item.active-chat { background-color: #e0e7ff !important; color: #111827 !important; }
+
+.modal-body input { background-color: #f9fafb !important; color: #111827 !important; border-color: #e5e7eb !important; }
+.modal-body input::placeholder { color: #6b7280 !important; }
+
+/* Status and avatar colors */
+.text-green-500 { color: #10b981 !important; }
+.text-red-500 { color: #ef4444 !important; }
+.bg-blue-500 { background-color: #242063 !important; }
+.bg-gray-600 { background-color: #9ca3af !important; }
+
+/* Gallery styles */
+.search-bar2 { background-color: #f9fafb !important; color: #111827 !important; border: 1px solid #e5e7eb !important; }
+.search-bar2::placeholder { color: #6b7280 !important; }
+
+#file-tabs { background-color: #f9fafb !important; }
+.file-tab { color: #6b7280 !important; }
+.file-tab:hover { background-color: #e5e7eb !important; color: #111827 !important; }
+.file-tab.bg-blue-600 { background-color: #242063 !important; color: #ffffff !important; }
+
+/* Gallery table styles */
+.bg-gray-800.rounded-lg { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+table thead { background-color: #f9fafb !important; }
+table thead th { color: #111827 !important; }
+table tbody tr { border-color: #e5e7eb !important; }
+table tbody tr:hover { background-color: #f9fafb !important; }
+
+.file-row { border-color: #e5e7eb !important; }
+.file-row:hover { background-color: #f9fafb !important; }
+.file-row td { color: #111827 !important; }
 
 /* Gallery pagination */
-body.light-mode #pagination-container .text-gray-400 {
-    color: #64748b !important;
-}
-
-body.light-mode #pagination-prev,
-body.light-mode #pagination-next {
-    background-color: #fff !important;
-    border-color: #e0e0e0 !important;
-    color: #64748b !important;
-}
-
-body.light-mode #pagination-prev:hover,
-body.light-mode #pagination-next:hover {
-    background-color: #f8fafc !important;
-    color: #1E293B !important;
-}
+#pagination-container .text-gray-400 { color: #6b7280 !important; }
+#pagination-prev, #pagination-next { background-color: #ffffff !important; border-color: #e5e7eb !important; color: #6b7280 !important; }
+#pagination-prev:hover, #pagination-next:hover { background-color: #f9fafb !important; color: #111827 !important; }
 
 /* Gallery modal */
-body.light-mode #deleteModal .bg-gray-800 {
-    background-color: #fff !important;
-}
-
-body.light-mode #deleteModal .text-white {
-    color: #1E293B !important;
-}
-
-body.light-mode #deleteModal .text-gray-300 {
-    color: #64748b !important;
-}
-
-body.light-mode #deleteModal .bg-gray-600 {
-    background-color: #e2e8f0 !important;
-    color: #1E293B !important;
-}
-
-body.light-mode #deleteModal .bg-gray-600:hover {
-    background-color: #cbd5e1 !important;
-}
+#deleteModal .bg-gray-800 { background-color: #ffffff !important; }
+#deleteModal .text-white { color: #111827 !important; }
+#deleteModal .text-gray-300 { color: #6b7280 !important; }
+#deleteModal .bg-gray-600 { background-color: #e5e7eb !important; color: #111827 !important; }
+#deleteModal .bg-gray-600:hover { background-color: #d1d5db !important; }
 
 /* Gallery buttons */
-body.light-mode .btn-primary2 {
-    background-color: #3b82f6 !important;
-    color: white !important;
-}
+.btn-primary2 { background-color: #242063 !important; color: #ffffff !important; }
+.btn-primary2:hover { background-color: #1e1b53 !important; }
 
-body.light-mode .btn-primary2:hover {
-    background-color: #2563eb !important;
-}
+.download-file-btn { color: #242063 !important; }
+.download-file-btn:hover { color: #1e1b53 !important; background-color: #f9fafb !important; }
 
-/* Gallery action buttons */
-body.light-mode .download-file-btn {
-    color: #3b82f6 !important;
-}
+.delete-file-btn { color: #ef4444 !important; }
+.delete-file-btn:hover { color: #dc2626 !important; background-color: #fef2f2 !important; }
 
-body.light-mode .download-file-btn:hover {
-    color: #2563eb !important;
-    background-color: #f8fafc !important;
-}
+/* AddFile styles */
+.upload-card { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; }
+.upload-area { border-color: #e5e7eb !important; background-color: #f9fafb !important; }
+.upload-area:hover { border-color: #242063 !important; background-color: #f3f4f6 !important; }
+.text-gray-500 { color: #6b7280 !important; }
+.upload-btn-primary { background-color: #242063 !important; color: #ffffff !important; }
 
-body.light-mode .delete-file-btn {
-    color: #ef4444 !important;
-}
-
-body.light-mode .delete-file-btn:hover {
-    color: #dc2626 !important;
-    background-color: #fef2f2 !important;
-}
-
-/* AddFile Theme Support */
-body.light-mode .upload-card {
-    background-color: #fff !important;
-    border: 1px solid #e0e0e0 !important;
-}
-
-body.light-mode .upload-area {
-    border-color: #e0e0e0 !important;
-    background-color: #f8fafc !important;
-}
-
-body.light-mode .upload-area:hover {
-    border-color: #3b82f6 !important;
-    background-color: #f1f5f9 !important;
-}
-
-body.light-mode .text-gray-500 {
-    color: #6b7280 !important;
-}
-
-body.light-mode .upload-btn-primary {
-    background-color: #3b82f6 !important;
-    color: white !important;
-}
-
-body.light-mode .upload-btn-primary:hover {
-    background-color: #2563eb !important;
+.upload-btn-primary:hover {
+    background-color: #1e1b53 !important;
 }
 
 /* AddFile progress section */
-body.light-mode #uploadProgress .bg-gray-800 {
-    background-color: #fff !important;
-    border: 1px solid #e0e0e0 !important;
+#uploadProgress .bg-gray-800 {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
 }
 
-body.light-mode #uploadProgress .text-white {
-    color: #1E293B !important;
+#uploadProgress .text-white {
+    color: #111827 !important;
 }
 
-body.light-mode #uploadProgress .bg-gray-700 {
-    background-color: #f1f5f9 !important;
+#uploadProgress .bg-gray-700 {
+    background-color: #f9fafb !important;
 }
 
 /* AddFile results section */
-body.light-mode #uploadResults .bg-gray-800 {
-    background-color: #fff !important;
-    border: 1px solid #e0e0e0 !important;
+#uploadResults .bg-gray-800 {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
 }
 
-body.light-mode #uploadResults .text-white {
-    color: #1E293B !important;
+#uploadResults .text-white {
+    color: #111827 !important;
 }
 
 /* AddFile error section */
-body.light-mode #uploadError .bg-red-900 {
+#uploadError .bg-red-900 {
     background-color: #fef2f2 !important;
     border-color: #fecaca !important;
 }
 
-body.light-mode #uploadError .text-white {
-    color: #1E293B !important;
+#uploadError .text-white {
+    color: #111827 !important;
 }
 
-body.light-mode #uploadError .text-red-200 {
+#uploadError .text-red-200 {
     color: #dc2626 !important;
 }
 
+/* Risk assessment styles */
         .risk-content {
             white-space: pre-wrap;
             font-family: monospace;
-            background-color: #1e293b;
+    background-color: #f9fafb;
+    color: #111827;
             padding: 1.5rem;
             border-radius: 0.5rem;
             margin-top: 1rem;
             line-height: 1.6;
+    border: 1px solid #e5e7eb;
         }
         .risk-section {
             margin-bottom: 1.5rem;

@@ -64,7 +64,12 @@ public class HomeController {
         }
 
         request.getSession(true).setAttribute("processNames", processNames);
-        return "redirect:/dashboard";
+        return "redirect:/home";
+    }
+
+    @GetMapping("/home")
+    public String home(Model model) {
+        return "home";
     }
 
     @GetMapping("/dashboard")

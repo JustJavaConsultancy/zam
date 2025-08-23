@@ -8,8 +8,8 @@
 }
 
 .form-card {
-    background-color: #1E293B;
-    border: 1px solid #334155;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
 }
  .status-completed {
             background-color: #166534;
@@ -28,8 +28,8 @@
             text-transform: uppercase;
         }
          .processes-card {
-                    background-color: #1E293B;
-                    border: 1px solid #334155;
+                    background-color: #ffffff;
+                    border: 1px solid #e5e7eb;
                     display: flex;
                     flex-direction: column;
                     height: 100%;
@@ -45,8 +45,8 @@
             right: 0;
             z-index: 10;
             min-width: 160px;
-            background-color: #1E293B;
-            border: 1px solid #334155;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
